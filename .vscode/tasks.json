@@ -6,7 +6,7 @@
         {
             "label": "swift-build",
             "type": "shell",
-            "command": "swift build" // for TensorFlow add -Xlinker -ltensorflow
+            "command": "swiftlint --fix;swift build" // for TensorFlow add -Xlinker -ltensorflow
         },
         // compile your SPM tests
         {

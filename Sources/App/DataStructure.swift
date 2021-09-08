@@ -8,17 +8,17 @@ public class TreeNode<T: Equatable>: Hashable {
     public var val: T
     public var left: TreeNode?
     public var right: TreeNode?
-    
+
     public init(_ val: T) {
         self.val = val
         left = nil
         right = nil
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self).hashValue)
     }
-    
+
     public static func == (lhs: TreeNode<T>, rhs: TreeNode<T>) -> Bool {
         return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
@@ -30,28 +30,28 @@ extension TreeNode {
         guard let rootVal = order.first, let rootVal = rootVal else {
             return nil
         }
-        
+
         let root = TreeNode<T>(rootVal)
         var Q = [root]
         var front = 0
         var index = 1
-        
+
         while index < order.count {
             let node = Q[front]
             front += 1
-            
+
             if let val = order[index] {
                 let item = TreeNode(val)
                 node.left = item
                 Q.append(item)
             }
-            
+
             index += 1
-            
+
             if index >= order.count {
                 break
             }
-            
+
             if let val = order[index] {
                 let item = TreeNode(val)
                 node.right = item
@@ -59,10 +59,10 @@ extension TreeNode {
             }
             index += 1
         }
-        
+
         return root
     }
-    
+
     /// 先序与中序构造二叉树
     public class func buildTree(preorder: [T], inorder: [T]) -> TreeNode<T> {
         func create(_ preorder: [T], _ l1: Int, _ h1: Int, _ inorder: [T], _ l2: Int, _ h2: Int) -> TreeNode {
@@ -95,57 +95,57 @@ extension TreeNode {
         let h2 = inorder.count - 1
         return create(preorder, l1, h1, inorder, l2, h2)
     }
-    
+
     /// 打印二叉树中值为x的结点的所有祖先（假设值x的结点不多于1个）
     public func isAncestor(_ t: TreeNode?, x: T) -> Bool {
         guard let t = t else {
             return false
         }
-        
+
         if let val = t.left?.val, val == x {
             print("isAncestor \(t.val)")
             return true
         }
-        
+
         if let val = t.right?.val, val == x {
             print("isAncestor \(t.val)")
             return true
         }
-        
+
         if isAncestor(t.left, x: x) || isAncestor(t.right, x: x) {
             print("isAncestor \(t.val)")
             return true
         }
         return false
     }
-    
+
     /// 找出p和q的最近公共祖先结点
     public func lowestCommonAncestor(_ t: TreeNode?, _ p: TreeNode, _ q: TreeNode) -> TreeNode? {
         guard let t = t else {
             return nil
         }
-        
+
         if p == t || q == t {
             return t
         }
-        
+
         let l = lowestCommonAncestor(t.left, p, q)
         let r = lowestCommonAncestor(t.right, p, q)
-        
+
         if l != nil && r != nil {
             return t
         }
-        
+
         if l == nil {
             return r
         }
         return l
     }
-    
+
     /// 求二叉树的宽度，二叉树的宽度定义为具有最多结点数的层中包含的结点数
     public func width() -> Int {
         let t = self
-        
+
         var Q = [TreeNode]()
         var w = 1
         var temp: TreeNode?
@@ -157,20 +157,20 @@ extension TreeNode {
                 if let l = temp?.left {
                     Q.append(l)
                 }
-                
+
                 if let r = temp?.right {
                     Q.append(r)
                 }
             }
         }
-        
+
         return w
     }
-    
+
     /// 二叉树的最大宽度(包括空结点)
     public func maxWidth() -> Int {
         let t = self
-        
+
         var Q = [(TreeNode, Int)]() // 队列中还要存储结点的位置
         var w = 1
         var left = 0 // 记录每层第一个结点的位置
@@ -178,24 +178,24 @@ extension TreeNode {
         while !Q.isEmpty {
             for i in 0..<Q.count {
                 let (temp, pos) = Q.removeFirst()
-                
+
                 if i == 0 {
                     left = pos
                 }
-                
+
                 if let l = temp.left {
                     // 会有大数越界的问题。因此使用&*
                     Q.append((l, pos &* 2)) // pos * 2 就是左孩子的位置
                 }
-                
+
                 if let r = temp.right {
                     Q.append((r, pos &* 2 &+ 1)) // pos * 2 + 1 就是右孩子的位置
                 }
-                
+
                 w = max(pos &- left &+ 1, w) // pos - left + 1 就是当前宽度
             }
         }
-        
+
         return w
     }
 }
@@ -213,4 +213,3 @@ public func preToPost(_ pre: inout [Int], _ post: inout [Int], _ l1: Int, _ h1: 
         preToPost(&pre, &post, l1 + half + 1, h1, l2 + half, h2 - 1)
     }
 }
-
